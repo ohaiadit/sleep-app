@@ -253,7 +253,7 @@
     <div class="card-lbl">I want to wake up at</div>
     <div class="time-box">
       <div class="time-face" id="wakeFace"></div>
-      <input type="time" id="wakeInput" value="07:00" oninput="onTimeInput('wakeInput','wakeFace')" onclick="tryShowPicker(this)">
+      <input type="time" id="wakeInput" value="07:00" oninput="onTimeInput('wakeInput','wakeFace')">
     </div>
   </div>
 
@@ -262,7 +262,7 @@
     <div class="card-lbl">I'm going to bed at</div>
     <div class="time-box">
       <div class="time-face" id="sleepFace"></div>
-      <input type="time" id="sleepInput" value="23:00" oninput="onTimeInput('sleepInput','sleepFace')" onclick="tryShowPicker(this)">
+      <input type="time" id="sleepInput" value="23:00" oninput="onTimeInput('sleepInput','sleepFace')">
     </div>
   </div>
 
@@ -302,9 +302,6 @@
 
   const SVG_COPY = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const SVG_CHK  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-
-  /* ─── Time picker ─── */
-  function tryShowPicker(el) { try { el.showPicker(); } catch(e) {} }
 
   /* ─── Mode ─── */
   function setMode(m) {
@@ -420,7 +417,7 @@
           <div class="res-body">
             <div class="res-lede">${primaryLede}</div>
             <div class="res-time">${primaryTime}</div>
-            ${mode === 'wake' ? `<div class="res-asleep">Asleep by ${asleepTime}</div>` : ''}
+            <div class="res-asleep">Asleep by ${asleepTime}</div>
             <div class="res-tag">${tagOf(c)}</div>
           </div>
           <button class="cp-btn" data-t="${copyTime}" onclick="doCopy(this)" aria-label="Copy time">
