@@ -161,6 +161,32 @@
       font-size: 12px; color: var(--muted); line-height: 1.55; margin-top: 14px;
     }
 
+    /* Wind-down on/off toggle */
+    .wd-ctrl { display: flex; align-items: center; gap: 12px; }
+    .tog-sw {
+      position: relative; display: inline-flex;
+      width: 44px; height: 26px; flex-shrink: 0; cursor: pointer;
+    }
+    .tog-sw input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .tog-track {
+      position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 13px;
+      transition: background .2s, border-color .2s;
+    }
+    .tog-track::before {
+      content: ''; position: absolute;
+      top: 3px; left: 3px; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--muted);
+      transition: transform .2s, background .2s;
+    }
+    .tog-sw input:checked + .tog-track {
+      background: rgba(63,185,80,.25); border-color: var(--green);
+    }
+    .tog-sw input:checked + .tog-track::before {
+      transform: translateX(18px); background: var(--green);
+    }
+
     /* Results header */
     .res-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -276,11 +302,19 @@
   <div class="card">
     <div class="sl-head">
       <div class="card-lbl">Wind-down time</div>
-      <div class="sl-val" id="wdVal">14 <em>min</em></div>
+      <div class="wd-ctrl">
+        <div class="sl-val" id="wdVal">14 <em>min</em></div>
+        <label class="tog-sw" title="Enable wind-down time">
+          <input type="checkbox" id="wdToggle" checked onchange="onWindToggle(this.checked)">
+          <span class="tog-track"></span>
+        </label>
+      </div>
     </div>
-    <input type="range" id="wdSlider" min="0" max="45" value="14" oninput="onWindSlide(this.value)">
-    <div class="sl-limits"><span>0 min</span><span>45 min</span></div>
-    <p class="sl-hint">This is how long it typically takes you to fall asleep after getting into bed. Adjust it to match your experience.</p>
+    <div id="wdBody">
+      <input type="range" id="wdSlider" min="0" max="45" value="14" oninput="onWindSlide(this.value)">
+      <div class="sl-limits"><span>0 min</span><span>45 min</span></div>
+      <p class="sl-hint">This is how long it typically takes you to fall asleep after getting into bed. Adjust it to match your experience.</p>
+    </div>
   </div>
 
   <!-- Results -->
@@ -302,9 +336,10 @@
   const CYCLE_MINS   = 90;
   const CYCLE_COUNTS = [6, 5, 4, 3];
 
-  let mode     = 'wake';
-  let windDown = 14;
-  let fmt      = 12;
+  let mode            = 'wake';
+  let windDown        = 14;
+  let windDownEnabled = true;
+  let fmt             = 12;
 
   const SVG_COPY = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const SVG_CHK  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
@@ -320,7 +355,7 @@
     calc();
   }
 
-  /* ─── Wind-down slider ─── */
+  /* ─── Wind-down slider + toggle ─── */
   function onWindSlide(v) {
     windDown = +v;
     document.getElementById('wdVal').innerHTML = `${v} <em>min</em>`;
@@ -330,6 +365,11 @@
   function fillSlider() {
     const pct = (windDown / 45) * 100;
     document.getElementById('wdSlider').style.setProperty('--fill', pct.toFixed(1) + '%');
+  }
+  function onWindToggle(checked) {
+    windDownEnabled = checked;
+    document.getElementById('wdBody').classList.toggle('hidden', !checked);
+    calc();
   }
 
   /* ─── Time picker ─── */
@@ -395,26 +435,29 @@
       const sleepMins = c * CYCLE_MINS;
       let bedMins, asleepMins, primaryMins, primaryLede;
 
+      const offset = windDownEnabled ? windDown : 0;
+
       if (mode === 'wake') {
         // Count backwards: wake ← sleep ← bed
         asleepMins  = base - sleepMins;
-        bedMins     = asleepMins - windDown;
-        primaryMins = bedMins;
-        primaryLede = 'Get into bed at';
+        bedMins     = asleepMins - offset;
+        primaryMins = asleepMins;          // primary is now the asleep time
+        primaryLede = 'Asleep by';
       } else {
         // Count forwards: bed → sleep → wake
         bedMins     = base;
-        asleepMins  = base + windDown;
+        asleepMins  = base + offset;
         primaryMins = asleepMins + sleepMins;
         primaryLede = 'Wake up at';
       }
 
       const primaryTime = fmtTime(minsToDate(primaryMins));
-      const asleepTime  = fmtTime(minsToDate(asleepMins));
-      // Copy the "get into bed" time in both modes:
-      // wake mode → bedMins is the actionable result to save
-      // sleep mode → primaryTime (wake-up time) is the actionable result
-      const copyTime = mode === 'wake' ? fmtTime(minsToDate(bedMins)) : primaryTime;
+      const bedTime     = fmtTime(minsToDate(bedMins));
+      // wake mode: copy the get-into-bed time (= asleep time when offset is 0)
+      // sleep mode: copy the wake-up time
+      const copyTime    = mode === 'wake' ? bedTime : primaryTime;
+      // show secondary "Get into bed at" line only when there is a real offset
+      const showBedLine = mode === 'wake' && offset > 0;
       const cls = colorOf(c);
 
       return `
@@ -426,7 +469,7 @@
           <div class="res-body">
             <div class="res-lede">${primaryLede}</div>
             <div class="res-time">${primaryTime}</div>
-            ${mode === 'wake' ? `<div class="res-asleep">Asleep by ${asleepTime}</div>` : ''}
+            ${showBedLine ? `<div class="res-asleep">Get into bed at ${bedTime}</div>` : ''}
             <div class="res-tag">${tagOf(c)}</div>
           </div>
           <button class="cp-btn" data-t="${copyTime}" onclick="doCopy(this)" aria-label="Copy time">
