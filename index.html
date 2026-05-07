@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>When Should I Wake Up?</title>
+  <title>When Should I Sleep?</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1117'/%3E%3Ccircle cx='16' cy='16' r='10' fill='%2358a6ff'/%3E%3Ccircle cx='20' cy='13' r='8' fill='%230d1117'/%3E%3C/svg%3E">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Wake Up?">
-  <meta property="og:title" content="When Should I Wake Up?">
+  <meta property="og:title" content="When Should I Sleep?">
   <meta property="og:description" content="Find the best time to wake up based on your sleep cycles.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="When Should I Wake Up?">
+  <meta name="twitter:title" content="When Should I Sleep?">
   <meta name="twitter:description" content="Find the best time to wake up based on your sleep cycles.">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -201,10 +201,6 @@
     .cl-yellow     { color: var(--yellow); }
     .cl-gray       { color: var(--muted); }
 
-    .res-tomorrow {
-      font-size: 10px; color: var(--muted); margin-top: 2px; opacity: .75;
-    }
-
     .no-results {
       text-align: center; color: var(--muted);
       font-size: 14px; padding: 24px 0; line-height: 1.5;
@@ -301,14 +297,15 @@
     }
     .sec-card.collapsed .sec-arrow { transform: rotate(0deg); }
     .sec-body {
-      overflow: hidden; max-height: 400px; opacity: 1;
+      overflow: hidden; max-height: 900px; opacity: 1;
       padding: 0 20px 18px;
-      transition: max-height .28s cubic-bezier(.4,0,.2,1),
+      transition: max-height .38s cubic-bezier(.4,0,.2,1),
                   opacity .2s ease,
-                  padding-bottom .28s cubic-bezier(.4,0,.2,1);
+                  padding-bottom .38s cubic-bezier(.4,0,.2,1);
     }
     .sec-card.collapsed .sec-body { max-height: 0; opacity: 0; padding-bottom: 0; }
     .sec-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .sec-body p + p { margin-top: 12px; }
 
     .hidden { display: none !important; }
 
@@ -319,7 +316,7 @@
 
   <header>
     <span class="icon">🌙</span>
-    <h1>When Should I Wake Up?</h1>
+    <h1>When Should I Sleep?</h1>
     <p class="sub">Find the best time to wake up based on your sleep cycles.</p>
   </header>
 
@@ -376,12 +373,19 @@
       <span class="sec-arrow">›</span>
     </button>
     <div class="sec-body">
-      <p class="sec-text">Your sleep is made up of repeating cycles, each lasting around 90 minutes. Every cycle moves through light sleep, deep sleep, and REM — the stage where your brain recharges and memories form. Waking up at the end of a cycle, rather than in the middle of one, is what makes you feel refreshed instead of groggy.</p>
+      <p class="sec-text">When you sleep, your brain doesn't just switch off. It moves through a series of stages that repeat throughout the night — each full round is called a sleep cycle, and it lasts about 90 minutes.</p>
+      <p class="sec-text">Each cycle has three main stages:</p>
+      <ul class="tips-list" style="margin-top: 10px;">
+        <li><strong>Light sleep</strong> — your body starts to slow down. Your heart rate drops, your muscles relax, and you drift off. This is the easiest stage to wake up from.</li>
+        <li><strong>Deep sleep</strong> — the most restorative stage. Your body repairs itself, strengthens your immune system, and consolidates memories. This is where real rest happens.</li>
+        <li><strong>REM sleep</strong> — short for Rapid Eye Movement. Your brain becomes active again, dreams occur, and your mind processes emotions and experiences from the day.</li>
+      </ul>
+      <p class="sec-text" style="margin-top: 12px;">A full night of sleep typically consists of 4 to 6 of these cycles. The magic is in the timing — waking up at the end of a cycle feels natural and easy. Waking up in the middle of one, especially during deep sleep, is what causes that heavy, disoriented feeling known as sleep inertia. That's the grogginess that can linger for hours even after a long night's sleep.</p>
       <ul class="cycle-legend">
-        <li class="cl-green">Optimal (9 hrs) — peak performance and recovery</li>
-        <li class="cl-green-soft">Good (7.5 hrs) — well rested for most people</li>
-        <li class="cl-yellow">Minimum (6 hrs) — functional but not ideal</li>
-        <li class="cl-gray">Not recommended (4.5 hrs) — expect to feel groggy</li>
+        <li class="cl-green">😴 Optimal (6 cycles · 9 hrs) — peak performance and recovery</li>
+        <li class="cl-green-soft">🙂 Good (5 cycles · 7.5 hrs) — well rested for most people</li>
+        <li class="cl-yellow">😐 Minimum (4 cycles · 6 hrs) — functional but not ideal</li>
+        <li class="cl-gray">🥱 Not recommended (3 cycles · 4.5 hrs) — expect to feel groggy</li>
       </ul>
     </div>
   </div>
@@ -484,7 +488,7 @@
     return c === 6 ? 'green' : c === 5 ? 'green-soft' : c === 4 ? 'yellow' : 'gray';
   }
   function tagOf(c) {
-    return c === 6 ? 'Optimal' : c === 5 ? 'Good' : c === 4 ? 'Minimum' : 'Not recommended';
+    return c === 6 ? '😴 Optimal' : c === 5 ? '🙂 Good' : c === 4 ? '😐 Minimum' : '🥱 Not recommended';
   }
 
   /* ─── Calculate & render ─── */
@@ -514,7 +518,6 @@
           primaryLede = 'Wake up at';
         }
 
-        const isTomorrow  = mode === 'sleep' && primaryMins >= 1440;
         const primaryTime = fmtTime(minsToDate(primaryMins));
         const cls = colorOf(c);
 
@@ -527,7 +530,6 @@
             <div class="res-body">
               <div class="res-lede">${primaryLede}</div>
               <div class="res-time">${primaryTime}</div>
-              ${isTomorrow ? '<div class="res-tomorrow">Tomorrow</div>' : ''}
               <div class="res-tag">${tagOf(c)}</div>
             </div>
             <button class="cp-btn" data-t="${primaryTime}" onclick="doCopy(this)" aria-label="Copy time">
