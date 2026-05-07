@@ -82,24 +82,25 @@
       color: var(--muted); margin-bottom: 14px;
     }
 
-    /* Time input */
+    /* Time input — visible face + invisible native input overlay */
     .time-box { position: relative; }
-    input[type="time"] {
-      display: block; width: 100%; max-width: 100%;
-      -webkit-appearance: none;
+    .time-face {
+      display: block; width: 100%;
       background: var(--surface-2); border: 1.5px solid var(--border);
       border-radius: var(--rs); color: var(--text);
-      font-size: 40px; font-weight: 700; font: 700 40px/1 inherit;
+      font: 700 40px/1 inherit;
       padding: 12px 16px; min-height: 44px;
-      text-align: center; text-align-last: center;
-      cursor: pointer; transition: border-color .18s;
+      text-align: center;
+      transition: border-color .18s;
+      -webkit-user-select: none; user-select: none;
     }
-    input[type="time"]:focus { outline: none; border-color: var(--accent); }
-    input[type="time"]::-webkit-calendar-picker-indicator {
-      cursor: pointer; filter: invert(.55) brightness(1.4);
+    /* Highlight the face when the underlying input is focused */
+    .time-box:focus-within .time-face { border-color: var(--accent); }
+    /* Native input sits invisibly over the face so taps/clicks open the picker */
+    input[type="time"] {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0; cursor: pointer; -webkit-appearance: none;
     }
-    input[type="time"]::-webkit-datetime-edit { padding: 0; }
-    input[type="time"]::-webkit-datetime-edit-fields-wrapper { padding: 0; }
 
     /* Slider */
     .sl-head {
@@ -251,7 +252,8 @@
   <div class="card" id="wakeCard">
     <div class="card-lbl">I want to wake up at</div>
     <div class="time-box">
-      <input type="time" id="wakeInput" value="07:00" oninput="calc()">
+      <div class="time-face" id="wakeFace"></div>
+      <input type="time" id="wakeInput" value="07:00" oninput="onTimeInput('wakeInput','wakeFace')">
     </div>
   </div>
 
@@ -259,7 +261,8 @@
   <div class="card hidden" id="sleepCard">
     <div class="card-lbl">I'm going to bed at</div>
     <div class="time-box">
-      <input type="time" id="sleepInput" value="23:00" oninput="calc()">
+      <div class="time-face" id="sleepFace"></div>
+      <input type="time" id="sleepInput" value="23:00" oninput="onTimeInput('sleepInput','sleepFace')">
     </div>
   </div>
 
@@ -323,11 +326,29 @@
     document.getElementById('wdSlider').style.setProperty('--fill', pct.toFixed(1) + '%');
   }
 
+  /* ─── Time face (formatted display over native input) ─── */
+  function updateFace(inputId, faceId) {
+    const v = document.getElementById(inputId).value;
+    if (!v) return;
+    const [h, m] = v.split(':').map(Number);
+    const d = new Date(); d.setHours(h, m, 0, 0);
+    document.getElementById(faceId).textContent = fmtTime(d);
+  }
+  function updateAllFaces() {
+    updateFace('wakeInput', 'wakeFace');
+    updateFace('sleepInput', 'sleepFace');
+  }
+  function onTimeInput(inputId, faceId) {
+    updateFace(inputId, faceId);
+    calc();
+  }
+
   /* ─── Format ─── */
   function setFmt(f) {
     fmt = f;
     document.getElementById('btn12').classList.toggle('active', f === 12);
     document.getElementById('btn24').classList.toggle('active', f === 24);
+    updateAllFaces();
     calc();
   }
   function fmtTime(date) {
@@ -432,6 +453,7 @@
 
   /* ─── Init ─── */
   fillSlider();
+  updateAllFaces();
   calc();
 </script>
 </body>
