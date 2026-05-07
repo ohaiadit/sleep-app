@@ -25,9 +25,12 @@
       --text:         #e6edf3;
       --muted:        #8b949e;
       --accent:       #58a6ff;
-      --green:        #3fb950;
-      --green-dim:    rgba(63,185,80,.13);
-      --green-ring:   rgba(63,185,80,.38);
+      --green:           #3fb950;
+      --green-dim:       rgba(63,185,80,.13);
+      --green-ring:      rgba(63,185,80,.38);
+      --green-soft:      #6aab75;
+      --green-soft-dim:  rgba(63,185,80,.07);
+      --green-soft-ring: rgba(63,185,80,.22);
       --yellow:       #d4a017;
       --yellow-dim:   rgba(212,160,23,.13);
       --yellow-ring:  rgba(212,160,23,.38);
@@ -118,85 +121,6 @@
       opacity: 0; cursor: pointer;
     }
 
-    /* Slider */
-    .sl-head {
-      display: flex; justify-content: space-between; align-items: baseline;
-      margin-bottom: 16px;
-    }
-    .sl-val {
-      font-size: 22px; font-weight: 700; color: var(--accent);
-      font-variant-numeric: tabular-nums;
-    }
-    .sl-val em { font-size: 13px; font-weight: 400; color: var(--muted); font-style: normal; }
-
-    input[type="range"] {
-      -webkit-appearance: none; appearance: none;
-      width: 100%; height: 44px;    /* tall touch target; track is styled via pseudo-element */
-      background: transparent;
-      outline: none; cursor: pointer;
-      padding: 0; margin: 0;
-    }
-    /* Webkit/iOS track — gradient fill controlled by --fill custom property set from JS */
-    input[type="range"]::-webkit-slider-runnable-track {
-      height: 5px; border-radius: 3px;
-      background: linear-gradient(to right, #58a6ff var(--fill, 31%), #21262d var(--fill, 31%));
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none;
-      width: 24px; height: 24px; border-radius: 50%;
-      background: #58a6ff;
-      box-shadow: 0 0 0 4px rgba(88,166,255,.18);
-      margin-top: -9.5px;     /* center 24px thumb on 5px track */
-      transition: box-shadow .15s, transform .12s; cursor: pointer;
-    }
-    input[type="range"]:active::-webkit-slider-thumb {
-      transform: scale(1.12); box-shadow: 0 0 0 7px rgba(88,166,255,.22);
-    }
-    /* Firefox track + fill */
-    input[type="range"]::-moz-range-track {
-      height: 5px; border-radius: 3px; background: #21262d; border: none;
-    }
-    input[type="range"]::-moz-range-progress {
-      height: 5px; border-radius: 3px; background: #58a6ff;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 24px; height: 24px; border-radius: 50%;
-      background: #58a6ff; border: none; cursor: pointer;
-    }
-    .sl-limits {
-      display: flex; justify-content: space-between;
-      font-size: 11px; color: var(--muted); margin-top: 8px;
-    }
-    .sl-hint {
-      font-size: 12px; color: var(--muted); line-height: 1.55; margin-top: 14px;
-    }
-
-    /* Wind-down on/off toggle */
-    .wd-ctrl { display: flex; align-items: center; gap: 12px; }
-    .tog-sw {
-      position: relative; display: inline-flex;
-      width: 44px; height: 26px; flex-shrink: 0; cursor: pointer;
-    }
-    .tog-sw input { position: absolute; opacity: 0; width: 0; height: 0; }
-    .tog-track {
-      position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-      background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: 13px;
-      transition: background .2s, border-color .2s;
-    }
-    .tog-track::before {
-      content: ''; position: absolute;
-      top: 3px; left: 3px; width: 18px; height: 18px;
-      border-radius: 50%; background: var(--muted);
-      transition: transform .2s, background .2s;
-    }
-    .tog-sw input:checked + .tog-track {
-      background: rgba(63,185,80,.25); border-color: var(--green);
-    }
-    .tog-sw input:checked + .tog-track::before {
-      transform: translateX(18px); background: var(--green);
-    }
-
     /* Results header */
     .res-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -207,17 +131,23 @@
       text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
     }
 
-    /* Format toggle */
-    .fmt-wrap {
-      display: flex; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 9px; padding: 3px; gap: 2px;
+    /* Format toggle — segmented control inside time picker cards */
+    .fmt-seg {
+      display: flex; margin-top: 10px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--rs); padding: 3px; gap: 2px;
     }
-    .fmt-btn {
-      background: transparent; border: none; color: var(--muted);
-      padding: 5px 12px; border-radius: 6px; min-height: 44px;
-      cursor: pointer; font-size: 12px; font-weight: 600; transition: all .15s;
+    .fmt-seg .fmt-btn {
+      flex: 1; background: transparent; border: none; color: var(--muted);
+      padding: 9px; border-radius: 7px; min-height: 38px;
+      cursor: pointer; font-size: 13px; font-weight: 600;
+      transition: background .15s, color .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .fmt-btn.active { background: var(--surface-2); color: var(--text); }
+    .fmt-seg .fmt-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
 
     /* Result cards */
     .res-card {
@@ -226,9 +156,10 @@
       border: 1px solid var(--border); margin-bottom: 10px;
       -webkit-tap-highlight-color: transparent;
     }
-    .res-card.green  { background: var(--green-dim);  border-color: var(--green-ring); }
-    .res-card.yellow { background: var(--yellow-dim); border-color: var(--yellow-ring); }
-    .res-card.gray   { background: var(--gray-dim);   border-color: var(--gray-ring); opacity: .72; }
+    .res-card.green      { background: var(--green-dim);       border-color: var(--green-ring); }
+    .res-card.green-soft { background: var(--green-soft-dim);  border-color: var(--green-soft-ring); }
+    .res-card.yellow     { background: var(--yellow-dim);      border-color: var(--yellow-ring); }
+    .res-card.gray       { background: var(--gray-dim);        border-color: var(--gray-ring); opacity: .72; }
 
     .cyc-badge {
       flex-shrink: 0; width: 72px; height: 72px; border-radius: 12px;
@@ -237,9 +168,10 @@
     }
     .cyc-cycles { font-size: 15px; font-weight: 700; line-height: 1; }
     .cyc-hrs    { font-size: 11px; font-weight: 400; line-height: 1; opacity: .7; }
-    .green  .cyc-badge { background: rgba(63,185,80,.2);    color: var(--green); }
-    .yellow .cyc-badge { background: rgba(212,160,23,.2);   color: var(--yellow); }
-    .gray   .cyc-badge { background: rgba(139,148,158,.13); color: var(--muted); }
+    .green       .cyc-badge { background: rgba(63,185,80,.2);    color: var(--green); }
+    .green-soft  .cyc-badge { background: rgba(63,185,80,.12);   color: var(--green-soft); }
+    .yellow      .cyc-badge { background: rgba(212,160,23,.2);   color: var(--yellow); }
+    .gray        .cyc-badge { background: rgba(139,148,158,.13); color: var(--muted); }
 
     .res-body { flex: 1; min-width: 0; }
     .res-lede { font-size: 11px; color: var(--muted); margin-bottom: 1px; }
@@ -248,11 +180,26 @@
       letter-spacing: -.5px; line-height: 1.1;
       font-variant-numeric: tabular-nums;
     }
-    .res-asleep { font-size: 12px; color: var(--muted); margin-top: 4px; }
     .res-tag  { font-size: 11px; font-weight: 600; margin-top: 3px; }
-    .green  .res-tag { color: var(--green); }
-    .yellow .res-tag { color: var(--yellow); }
-    .gray   .res-tag { color: var(--muted); }
+    .green       .res-tag { color: var(--green); }
+    .green-soft  .res-tag { color: var(--green-soft); }
+    .yellow      .res-tag { color: var(--yellow); }
+    .gray        .res-tag { color: var(--muted); }
+
+    /* ── Cycle legend ── */
+    .cycle-legend { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+    .cycle-legend li {
+      font-size: 12px; line-height: 1.45;
+      padding-left: 16px; position: relative;
+    }
+    .cycle-legend li::before {
+      content: '·'; position: absolute; left: 0;
+      font-weight: 700; font-size: 16px; line-height: .9;
+    }
+    .cl-green      { color: var(--green); }
+    .cl-green-soft { color: var(--green-soft); }
+    .cl-yellow     { color: var(--yellow); }
+    .cl-gray       { color: var(--muted); }
 
     .res-tomorrow {
       font-size: 10px; color: var(--muted); margin-top: 2px; opacity: .75;
@@ -329,23 +276,42 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* ── Collapsible info sections ── */
+    .sec-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); margin-top: 6px; margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .sec-header {
+      width: 100%; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
+      padding: 18px 20px; background: none; border: none;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      text-align: left;
+    }
+    .sec-header-lbl {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+    }
+    .sec-arrow {
+      flex-shrink: 0; display: inline-block;
+      font-size: 15px; color: var(--muted); line-height: 1;
+      transition: transform .22s cubic-bezier(.4,0,.2,1);
+      transform: rotate(90deg);
+    }
+    .sec-card.collapsed .sec-arrow { transform: rotate(0deg); }
+    .sec-body {
+      overflow: hidden; max-height: 400px; opacity: 1;
+      padding: 0 20px 18px;
+      transition: max-height .28s cubic-bezier(.4,0,.2,1),
+                  opacity .2s ease,
+                  padding-bottom .28s cubic-bezier(.4,0,.2,1);
+    }
+    .sec-card.collapsed .sec-body { max-height: 0; opacity: 0; padding-bottom: 0; }
+    .sec-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
     .hidden { display: none !important; }
 
-    /* Wind-down card — smooth collapse when switching to sleep mode */
-    #wdCard {
-      overflow: hidden;
-      max-height: 300px;
-      opacity: 1;
-      transition: max-height .26s cubic-bezier(.4,0,.2,1),
-                  opacity .2s ease,
-                  margin-bottom .26s cubic-bezier(.4,0,.2,1);
-    }
-    #wdCard.wd-hidden {
-      max-height: 0;
-      opacity: 0;
-      margin-bottom: 0;
-      pointer-events: none;
-    }
   </style>
 </head>
 <body>
@@ -377,6 +343,10 @@
       <div class="time-face" id="wakeFace"></div>
       <input type="time" id="wakeInput" value="07:00" oninput="onTimeInput('wakeInput','wakeFace')" onclick="tryShowPicker(this)">
     </div>
+    <div class="fmt-seg">
+      <button class="fmt-btn fmt-12 active" onclick="setFmt(12)">12h</button>
+      <button class="fmt-btn fmt-24" onclick="setFmt(24)">24h</button>
+    </div>
   </div>
 
   <!-- Sleep-at input -->
@@ -386,47 +356,50 @@
       <div class="time-face" id="sleepFace"></div>
       <input type="time" id="sleepInput" value="23:00" oninput="onTimeInput('sleepInput','sleepFace')" onclick="tryShowPicker(this)">
     </div>
-  </div>
-
-  <!-- Wind-down slider -->
-  <div class="card" id="wdCard">
-    <div class="sl-head">
-      <div class="card-lbl">Wind-down time</div>
-      <div class="wd-ctrl">
-        <div class="sl-val" id="wdVal">14 <em>min</em></div>
-        <label class="tog-sw" title="Enable wind-down time">
-          <input type="checkbox" id="wdToggle" checked onchange="onWindToggle(this.checked)">
-          <span class="tog-track"></span>
-        </label>
-      </div>
-    </div>
-    <p class="sl-hint">This is how long it typically takes you to fall asleep after getting into bed. Adjust it to match your experience.</p>
-    <div id="wdBody">
-      <input type="range" id="wdSlider" min="0" max="45" value="14" oninput="onWindSlide(this.value)">
-      <div class="sl-limits"><span>0 min</span><span>45 min</span></div>
+    <div class="fmt-seg">
+      <button class="fmt-btn fmt-12 active" onclick="setFmt(12)">12h</button>
+      <button class="fmt-btn fmt-24" onclick="setFmt(24)">24h</button>
     </div>
   </div>
 
   <!-- Results -->
   <div class="res-row">
     <div class="res-lbl">Recommended times</div>
-    <div class="fmt-wrap">
-      <button class="fmt-btn active" id="btn12" onclick="setFmt(12)">12h</button>
-      <button class="fmt-btn"        id="btn24" onclick="setFmt(24)">24h</button>
-    </div>
   </div>
 
   <div id="results"></div>
 
+  <!-- Sleep cycle explainer -->
+  <div class="sec-card collapsed" id="cycleCard">
+    <button class="sec-header" onclick="toggleSection('cycleCard','slp_cycle_collapsed')">
+      <span class="sec-header-lbl">What is a Sleep Cycle?</span>
+      <span class="sec-arrow">›</span>
+    </button>
+    <div class="sec-body">
+      <p class="sec-text">Your sleep is made up of repeating cycles, each lasting around 90 minutes. Every cycle moves through light sleep, deep sleep, and REM — the stage where your brain recharges and memories form. Waking up at the end of a cycle, rather than in the middle of one, is what makes you feel refreshed instead of groggy.</p>
+      <ul class="cycle-legend">
+        <li class="cl-green">Optimal (9 hrs) — peak performance and recovery</li>
+        <li class="cl-green-soft">Good (7.5 hrs) — well rested for most people</li>
+        <li class="cl-yellow">Minimum (6 hrs) — functional but not ideal</li>
+        <li class="cl-gray">Not recommended (4.5 hrs) — expect to feel groggy</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Sleep tips -->
-  <div class="tips-card">
-    <div class="card-lbl">Sleep Tips</div>
-    <ul class="tips-list">
-      <li>Avoid screens 30 min before bed</li>
-      <li>Keep your bedroom cool (16–19°C / 60–67°F)</li>
-      <li>Stick to a consistent sleep schedule, even on weekends</li>
-      <li>Avoid caffeine after 2:00 PM</li>
-    </ul>
+  <div class="sec-card collapsed" id="tipsCard">
+    <button class="sec-header" onclick="toggleSection('tipsCard','slp_tips_collapsed')">
+      <span class="sec-header-lbl">Sleep Tips</span>
+      <span class="sec-arrow">›</span>
+    </button>
+    <div class="sec-body">
+      <ul class="tips-list">
+        <li>Avoid screens 30 min before bed</li>
+        <li>Keep your bedroom cool (16–19°C / 60–67°F)</li>
+        <li>Stick to a consistent sleep schedule, even on weekends</li>
+        <li>Avoid caffeine after 2:00 PM</li>
+      </ul>
+    </div>
   </div>
 
   <footer>Made with ♥️ in Claude Code.</footer>
@@ -444,10 +417,8 @@
   const CYCLE_MINS   = 90;
   const CYCLE_COUNTS = [6, 5, 4, 3];
 
-  let mode            = 'wake';
-  let windDown        = 14;
-  let windDownEnabled = true;
-  let fmt             = 12;
+  let mode = 'wake';
+  let fmt  = 12;
 
   const SVG_COPY = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const SVG_CHK  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
@@ -460,27 +431,6 @@
     document.getElementById('pill').classList.toggle('right', m === 'sleep');
     document.getElementById('wakeCard').classList.toggle('hidden',  m !== 'wake');
     document.getElementById('sleepCard').classList.toggle('hidden', m !== 'sleep');
-    document.getElementById('wdCard').classList.toggle('wd-hidden', m === 'sleep');
-    calc();
-  }
-
-  /* ─── Wind-down slider + toggle ─── */
-  function onWindSlide(v) {
-    windDown = +v;
-    localStorage.setItem('slp_wd_val', v);
-    document.getElementById('wdVal').innerHTML = `${v} <em>min</em>`;
-    fillSlider();
-    calc();
-  }
-  function fillSlider() {
-    const pct = (windDown / 45) * 100;
-    document.getElementById('wdSlider').style.setProperty('--fill', pct.toFixed(1) + '%');
-  }
-  function onWindToggle(checked) {
-    windDownEnabled = checked;
-    localStorage.setItem('slp_wd_on', checked ? '1' : '0');
-    document.getElementById('wdBody').classList.toggle('hidden', !checked);
-    document.getElementById('wdVal').style.visibility = checked ? '' : 'hidden';
     calc();
   }
 
@@ -509,8 +459,8 @@
   function setFmt(f) {
     fmt = f;
     localStorage.setItem('slp_fmt', f);
-    document.getElementById('btn12').classList.toggle('active', f === 12);
-    document.getElementById('btn24').classList.toggle('active', f === 24);
+    document.querySelectorAll('.fmt-12').forEach(b => b.classList.toggle('active', f === 12));
+    document.querySelectorAll('.fmt-24').forEach(b => b.classList.toggle('active', f === 24));
     updateAllFaces();
     calc();
   }
@@ -530,9 +480,11 @@
     return d;
   }
 
-  function colorOf(c) { return c >= 5 ? 'green' : c === 4 ? 'yellow' : 'gray'; }
+  function colorOf(c) {
+    return c === 6 ? 'green' : c === 5 ? 'green-soft' : c === 4 ? 'yellow' : 'gray';
+  }
   function tagOf(c) {
-    return c === 6 ? '✦ Ideal' : c === 5 ? '✓ Great' : c === 4 ? '~ Minimum' : '✗ Too short';
+    return c === 6 ? 'Optimal' : c === 5 ? 'Good' : c === 4 ? 'Minimum' : 'Not recommended';
   }
 
   /* ─── Calculate & render ─── */
@@ -552,29 +504,18 @@
     try {
       el.innerHTML = CYCLE_COUNTS.map(c => {
         const sleepMins = c * CYCLE_MINS;
-        let bedMins, asleepMins, primaryMins, primaryLede;
-
-        const offset = windDownEnabled ? windDown : 0;
+        let primaryMins, primaryLede;
 
         if (mode === 'wake') {
-          // Count backwards: wake ← sleep ← bed
-          asleepMins  = base - sleepMins;
-          bedMins     = asleepMins - offset;
-          primaryMins = asleepMins;
-          primaryLede = 'Asleep by';
+          primaryMins = base - sleepMins;
+          primaryLede = 'Get into bed at';
         } else {
-          // Input is fall-asleep time; count forward to wake
-          asleepMins  = base;
-          bedMins     = base;
           primaryMins = base + sleepMins;
           primaryLede = 'Wake up at';
         }
 
         const isTomorrow  = mode === 'sleep' && primaryMins >= 1440;
         const primaryTime = fmtTime(minsToDate(primaryMins));
-        const bedTime     = fmtTime(minsToDate(bedMins));
-        const copyTime    = mode === 'wake' ? bedTime : primaryTime;
-        const showBedLine = mode === 'wake' && windDownEnabled && windDown > 0;
         const cls = colorOf(c);
 
         return `
@@ -587,10 +528,9 @@
               <div class="res-lede">${primaryLede}</div>
               <div class="res-time">${primaryTime}</div>
               ${isTomorrow ? '<div class="res-tomorrow">Tomorrow</div>' : ''}
-              ${showBedLine ? `<div class="res-asleep">Get into bed at ${bedTime}</div>` : ''}
               <div class="res-tag">${tagOf(c)}</div>
             </div>
-            <button class="cp-btn" data-t="${copyTime}" onclick="doCopy(this)" aria-label="Copy time">
+            <button class="cp-btn" data-t="${primaryTime}" onclick="doCopy(this)" aria-label="Copy time">
               ${SVG_COPY}
             </button>
           </div>`;
@@ -607,6 +547,11 @@
   function dismissHsBanner() {
     localStorage.setItem('slp_hs_dismissed', '1');
     document.getElementById('hsBanner').classList.add('hidden');
+  }
+
+  function toggleSection(id, key) {
+    const collapsed = document.getElementById(id).classList.toggle('collapsed');
+    localStorage.setItem(key, collapsed ? '1' : '0');
   }
 
   /* ─── Copy ─── */
@@ -638,29 +583,23 @@
     const sf = localStorage.getItem('slp_fmt');
     if (sf) fmt = +sf;
 
-    const sw = localStorage.getItem('slp_wd_on');
-    if (sw !== null) windDownEnabled = sw === '1';
-
-    const sv = localStorage.getItem('slp_wd_val');
-    if (sv !== null) windDown = +sv;
-
     const swt = localStorage.getItem('slp_wake_time');
     if (swt) document.getElementById('wakeInput').value = swt;
 
     const sst = localStorage.getItem('slp_sleep_time');
     if (sst) document.getElementById('sleepInput').value = sst;
 
-    document.getElementById('btn12').classList.toggle('active', fmt === 12);
-    document.getElementById('btn24').classList.toggle('active', fmt === 24);
-    document.getElementById('wdSlider').value = windDown;
-    document.getElementById('wdVal').innerHTML = `${windDown} <em>min</em>`;
-    document.getElementById('wdToggle').checked = windDownEnabled;
-    document.getElementById('wdBody').classList.toggle('hidden', !windDownEnabled);
-    document.getElementById('wdVal').style.visibility = windDownEnabled ? '' : 'hidden';
+    document.querySelectorAll('.fmt-12').forEach(b => b.classList.toggle('active', fmt === 12));
+    document.querySelectorAll('.fmt-24').forEach(b => b.classList.toggle('active', fmt === 24));
 
-    fillSlider();
     updateAllFaces();
     calc();
+
+    // Restore collapsible section states (collapsed by default; remove if user opened)
+    if (localStorage.getItem('slp_cycle_collapsed') === '0')
+      document.getElementById('cycleCard').classList.remove('collapsed');
+    if (localStorage.getItem('slp_tips_collapsed') === '0')
+      document.getElementById('tipsCard').classList.remove('collapsed');
 
     // Onboarding tooltip — first visit only
     if (!localStorage.getItem('slp_tooltip_dismissed')) {
