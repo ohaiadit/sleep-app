@@ -54,13 +54,22 @@
     .wrap { max-width: 440px; margin: 0 auto; width: 100%; }
 
     /* ── Header ── */
-    header { text-align: center; padding: 24px 0 30px; }
+    header { text-align: center; padding: 24px 0 20px; }
     .icon {
       font-size: 42px; display: block; margin-bottom: 10px;
       filter: drop-shadow(0 0 18px rgba(88,166,255,.35));
     }
     h1 { font-size: 24px; font-weight: 700; letter-spacing: -.4px; }
     .sub { font-size: 13px; color: var(--muted); margin-top: 5px; }
+    .help-btn {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: none; border: 1.5px solid var(--border);
+      color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      margin-top: 10px; transition: border-color .15s, color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .help-btn:hover { border-color: var(--muted); color: var(--text); }
 
     /* ── Mode toggle ── */
     .mode-wrap {
@@ -236,14 +245,21 @@
       font-size: 12px; color: var(--muted); opacity: .45; line-height: 1.7;
     }
 
-    /* ── Onboarding tooltip ── */
+    /* ── Onboarding overlay ── */
+    .onb-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.55);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
     .onb-tooltip {
       background: var(--surface); border: 1px solid var(--border);
       border-left: 3px solid var(--accent);
-      border-radius: var(--rs); padding: 14px 16px; margin-bottom: 16px;
+      border-radius: var(--rs); padding: 18px 20px;
       display: flex; flex-direction: column; gap: 10px;
+      width: 100%; max-width: 400px;
     }
-    .onb-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .onb-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
     .onb-btn {
       align-self: flex-end;
       background: var(--surface-2); color: var(--text);
@@ -330,6 +346,7 @@
     <span class="icon">🌙</span>
     <h1>When Should I Sleep?</h1>
     <p class="sub">Find the best time to get to bed and wake up based on your sleep cycles.</p>
+    <button class="help-btn" onclick="showTooltip()" aria-label="How does this work?">?</button>
   </header>
 
   <!-- Mode toggle -->
@@ -339,10 +356,14 @@
     <button class="mode-btn"        id="sleepBtn" onclick="setMode('sleep')">🛌 Sleep at…</button>
   </div>
 
-  <!-- Onboarding tooltip -->
-  <div id="tooltip" class="onb-tooltip hidden">
-    <p class="onb-text">Choose a mode to get started — wake up at a set time, or plan from when you'll sleep.</p>
-    <button class="onb-btn" onclick="dismissTooltip()">Got it</button>
+  <!-- Onboarding overlay -->
+  <div id="tooltip" class="onb-overlay hidden">
+    <div class="onb-tooltip">
+      <p class="onb-text"><strong>How do you want to plan your sleep? 😴</strong></p>
+      <p class="onb-text">🛏️ <strong>Wake up at…</strong> — find the best bedtime for your wake-up time<br>
+        ⏰ <strong>Sleep at…</strong> — find the best wake-up time for your bedtime</p>
+      <button class="onb-btn" onclick="dismissTooltip()">Got it</button>
+    </div>
   </div>
 
   <!-- Wake-up-at input -->
@@ -420,7 +441,7 @@
     </div>
   </div>
 
-  <footer>Vibe coded with ❤️ in Claude Code.</footer>
+  <footer>When Should I Sleep? v1.3.3 · Vibe coded with ❤️ in Claude Code.</footer>
 
 </div>
 
@@ -563,6 +584,9 @@
     }
   }
 
+  function showTooltip() {
+    document.getElementById('tooltip').classList.remove('hidden');
+  }
   function dismissTooltip() {
     localStorage.setItem('slp_tooltip_dismissed', '1');
     document.getElementById('tooltip').classList.add('hidden');
