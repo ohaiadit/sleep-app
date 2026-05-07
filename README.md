@@ -38,12 +38,14 @@ start index.html
 |---------|-------------|
 | v1.0 | Initial release — two modes, cycle length slider, copy to clipboard |
 | v1.1 | Removed cycle length slider, added wind-down time slider, improved result cards with bed time + asleep time, renamed "Sleeping now" to "Sleep at…" |
+| v1.1.1 | Fixed iOS Safari layout issues — time picker and wind-down slider rendering, touch target sizing, small screen overflow |
 
 ## Roadmap
 
 - v1.2 — Save user preferences locally (wind-down time, time format)
-- v1.3 — Nap mode
-- v1.4 — Sleep debt tracker
+- v1.3 — Bahasa Indonesia translation
+- v1.4 — Nap mode
+- v1.5 — Sleep debt tracker
 - v2.0 — PWA support (installable on phone like a native app)
 
 ## Built with
