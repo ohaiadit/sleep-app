@@ -311,7 +311,7 @@
       </div>
     </div>
     <div id="wdBody">
-      <p class="sl-hint">What is wind-down time? It's the time between getting into bed and actually falling asleep — including things like scrolling your phone, reading, or simply lying awake. The average is around 14 minutes, but 10–20 minutes is considered a healthy range. Adjust the slider to match your experience.</p>
+      <p class="sl-hint">Wind-down time is the time between getting into bed and actually falling asleep. Adjust the slider to match how long you usually take to fall asleep once you're in bed.</p>
       <input type="range" id="wdSlider" min="0" max="45" value="14" oninput="onWindSlide(this.value)">
       <div class="sl-limits"><span>0 min</span><span>45 min</span></div>
       <p class="sl-hint">This is how long it typically takes you to fall asleep after getting into bed. Adjust it to match your experience.</p>
@@ -370,6 +370,7 @@
   function onWindToggle(checked) {
     windDownEnabled = checked;
     document.getElementById('wdBody').classList.toggle('hidden', !checked);
+    document.getElementById('wdVal').classList.toggle('hidden', !checked);
     calc();
   }
 
