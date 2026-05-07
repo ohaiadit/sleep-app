@@ -1,66 +1,86 @@
-# When Should I Wake Up?
+# 🌙 Peak Sleep
 
-A mobile-first web app that helps you find the best time to wake up — based on your natural sleep cycles.
+> Sleep smarter. Wake up better.
 
-## How it works
+Peak Sleep is a sleep cycle calculator that helps you find the best time to go to bed or wake up — so you stop waking up groggy and start waking up refreshed. Built as a single HTML file, no installation required.
 
-Sleep happens in 90-minute cycles. Waking up between cycles — rather than in the middle of one — is what makes you feel rested. This app calculates the optimal bedtimes or wake-up times based on that principle, with an optional wind-down buffer factored in.
+## The idea
 
-## Features
+Most people set an alarm for 7 or 8 hours of sleep and hope for the best. But it's not just about how long you sleep — it's about *when* you wake up within your sleep cycle. Waking up at the end of a 90-minute cycle feels natural. Waking up in the middle of one is what causes that heavy, disoriented feeling that can linger for hours.
 
-- **Two modes**
-  - **Wake up at…** — pick a wake-up time, get recommended bedtimes
-  - **Sleep at…** — pick a bedtime, get recommended wake-up times
-- **Color-coded results**
-  - 🟢 5–6 cycles — ideal (7.5–9 hours)
-  - 🟡 4 cycles — minimum viable (6 hours)
-  - ⚫ 3 cycles — too short (not recommended)
-- **Adjustable wind-down time** — set how long it takes you to fall asleep after getting into bed (0–45 min, default 14 min). Only available in "Wake up at…" mode.
-- **12/24-hour time format toggle**
-- **Copy to clipboard** — tap any result to copy the time instantly
-- **Mobile-first** — works on any screen size, no install required
+Peak Sleep does the math for you.
 
-## Usage
+## How to use it
 
-Open the live app: **[yourusername.github.io/sleep-app](https://yourusername.github.io/sleep-app)**
+Open the live app: **[ohaiadit.github.io/sleep-app](https://ohaiadit.github.io/sleep-app)**
 
-Or run it locally by cloning the repo and opening `index.html` in any browser — no dependencies, no build step required.
+Two modes:
+- **Wake up at…** — pick a wake-up time, get recommended bedtimes
+- **Sleep at…** — pick a bedtime, get recommended wake-up times
+
+Results are color-coded by sleep quality:
+- 😴 Peak sleep — 6 cycles · 9 hrs
+- 🙂 Good sleep — 5 cycles · 7.5 hrs
+- 😐 Light sleep — 4 cycles · 6 hrs
+- 🥱 Poor sleep — 3 cycles · 4.5 hrs
+
+## Run it locally
+
+No dependencies, no build step. Just clone and open:
 
 ```bash
-git clone https://github.com/yourusername/sleep-app.git
+git clone https://github.com/ohaiadit/sleep-app.git
 cd sleep-app
 open index.html
 ```
 
-## Versioning
+## Features
+
+- Two sleep planning modes
+- Color-coded sleep quality results
+- 12/24-hour time format toggle
+- EN/ID language toggle (defaults to Bahasa Indonesia)
+- Copy to clipboard — copies the full result summary
+- Collapsible sleep cycle explainer and sleep tips
+- First-load onboarding tooltip with reopenable help button
+- Add to Home Screen prompt for iOS
+- Works offline — fully self-contained, no external dependencies
+
+## Built with
+
+This app was built entirely using [Claude Code](https://claude.ai/code) — Anthropic's agentic coding tool — without writing a single line of code manually. The entire development process, from concept to versioning to copy, was done conversationally.
+
+- Vanilla HTML, CSS, and JavaScript
+- No frameworks, no libraries, no build tools
+- Single self-contained `index.html` file
+
+## Version history
 
 | Version | Description |
 |---------|-------------|
 | v1.0 | Initial release — two modes, cycle length slider, copy to clipboard |
-| v1.1 | Removed cycle length slider, added wind-down time slider, improved result cards with bed time + asleep time, renamed "Sleeping now" to "Sleep at…" |
-| v1.1.1 | Fixed iOS Safari layout issues — time picker and wind-down slider rendering, touch target sizing, small screen overflow |
-| v1.1.2 | Fixed time format toggle not applying universally to time input fields |
-| v1.1.3 | Fixed desktop time picker broken after iOS fix; removed "Asleep by" from "Sleep at…" mode |
-| v1.1.4 | Added wind-down time toggle, swapped result card hierarchy (Asleep by as primary), hid get-into-bed time when wind-down is off |
-| v1.1.5 | Fixed placeholder time showing when wind-down is off; added wind-down explainer text |
-| v1.1.6 | Reverted wind-down explainer copy; fixed toggle alignment inconsistency |
-| v1.1.7 | Wind-down copy update; explainer visible in both toggle states |
-| v1.1.8 | Hid wind-down in "Sleep at…" mode; updated footer, app name, and subtitle |
+| v1.1 | Removed cycle length slider, added wind-down time slider, improved result cards, renamed "Sleeping now" to "Sleep at…", app name and subtitle updated |
+| v1.2 | Bug fixes and UX improvements — iOS Safari fix, time format toggle, wind-down toggle and explainer, result card hierarchy, save user preferences, default times, favicon, sleep hours on cards, midnight crossover label, copy feedback, social meta tags |
+| v1.3 | Onboarding tooltip, sleep tips section, Add to Home Screen prompt |
+| v1.3.1 | Collapsible sleep cycle explainer and sleep tips; removed wind-down time; updated result labels and colors |
+| v1.3.2 | App renamed to "When Should I Sleep?", emoji labels, sleep cycle explainer rewrite, removed tomorrow label, 12/24hr toggle repositioned |
+| v1.3.3 | Moon icon, updated subtitle, separator, footer with app name and version, clipboard format, sleep quality label refresh, onboarding and help button update |
+| v1.4 | App renamed to "Peak Sleep", new subtitle, Bahasa Indonesia translation, EN/ID language toggle, apple touch icon |
 
 ## Roadmap
 
-- v1.2 — Save user preferences locally (wind-down time, time format)
-- v1.3 — Bahasa Indonesia translation
-- v1.4 — Nap mode
-- v1.5 — Sleep debt tracker
+- v1.5 — Nap mode
+- v1.6 — Sleep debt tracker
 - v2.0 — PWA support (installable on phone like a native app)
-
-## Built with
-
-- Vanilla HTML, CSS, and JavaScript
-- No external dependencies
-- Single self-contained `index.html` file
 
 ## License
 
 MIT — free to use, modify, and distribute.
+
+## About
+
+I'm a content marketing manager by day — which means late nights, tight deadlines, and way too many hours staring at reports that could've waited until morning. Peak Sleep started as a personal experiment: what if I actually timed my sleep properly instead of just crashing whenever I finished?
+
+I'm not a developer. This entire app was built conversationally through Claude Code, one iteration at a time. It's a personal project, but if it helps you wake up feeling less like a zombie, that's a win.
+
+— Aditya · [linkedin.com/in/ohaiadit](https://linkedin.com/in/ohaiadit)
