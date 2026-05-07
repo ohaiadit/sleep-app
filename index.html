@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>When Should I Sleep?</title>
+  <title>Peak Sleep</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌙%3C/text%3E%3C/svg%3E">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Wake Up?">
-  <meta property="og:title" content="When Should I Sleep?">
-  <meta property="og:description" content="Find the best time to get to bed and wake up based on your sleep cycles.">
+  <meta name="apple-mobile-web-app-title" content="Peak Sleep">
+  <meta property="og:title" content="Peak Sleep">
+  <meta property="og:description" content="Sleep smarter. Wake up better.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="When Should I Sleep?">
-  <meta name="twitter:description" content="Find the best time to get to bed and wake up based on your sleep cycles.">
+  <meta name="twitter:title" content="Peak Sleep">
+  <meta name="twitter:description" content="Sleep smarter. Wake up better.">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -61,12 +61,24 @@
     }
     h1 { font-size: 24px; font-weight: 700; letter-spacing: -.4px; }
     .sub { font-size: 13px; color: var(--muted); margin-top: 5px; }
+    .header-controls {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+    }
+    .lang-btn {
+      background: none; border: 1.5px solid var(--border);
+      color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .04em;
+      border-radius: 6px; padding: 4px 8px; cursor: pointer; line-height: 1;
+      transition: border-color .15s, color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lang-btn.active { border-color: var(--accent); color: var(--accent); }
+    .lang-btn:hover:not(.active) { border-color: var(--muted); color: var(--text); }
     .help-btn {
       width: 26px; height: 26px; border-radius: 50%;
       background: none; border: 1.5px solid var(--border);
       color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1;
       cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-      margin-top: 10px; transition: border-color .15s, color .15s;
+      transition: border-color .15s, color .15s;
       -webkit-tap-highlight-color: transparent;
     }
     .help-btn:hover { border-color: var(--muted); color: var(--text); }
@@ -344,9 +356,13 @@
 
   <header>
     <span class="icon">🌙</span>
-    <h1>When Should I Sleep?</h1>
-    <p class="sub">Find the best time to get to bed and wake up based on your sleep cycles.</p>
-    <button class="help-btn" onclick="showTooltip()" aria-label="How does this work?">?</button>
+    <h1>Peak Sleep</h1>
+    <p class="sub">Sleep smarter. Wake up better.</p>
+    <div class="header-controls">
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn active" data-lang="id" onclick="setLang('id')">ID</button>
+      <button class="help-btn" onclick="showTooltip()" aria-label="How does this work?">?</button>
+    </div>
   </header>
 
   <!-- Mode toggle -->
@@ -374,8 +390,8 @@
       <input type="time" id="wakeInput" value="07:00" oninput="onTimeInput('wakeInput','wakeFace')" onclick="tryShowPicker(this)">
     </div>
     <div class="fmt-seg">
-      <button class="fmt-btn fmt-12 active" onclick="setFmt(12)">12h</button>
-      <button class="fmt-btn fmt-24" onclick="setFmt(24)">24h</button>
+      <button class="fmt-btn fmt-12 active" onclick="setFmt(12,true)">12h</button>
+      <button class="fmt-btn fmt-24" onclick="setFmt(24,true)">24h</button>
     </div>
   </div>
 
@@ -387,8 +403,8 @@
       <input type="time" id="sleepInput" value="23:00" oninput="onTimeInput('sleepInput','sleepFace')" onclick="tryShowPicker(this)">
     </div>
     <div class="fmt-seg">
-      <button class="fmt-btn fmt-12 active" onclick="setFmt(12)">12h</button>
-      <button class="fmt-btn fmt-24" onclick="setFmt(24)">24h</button>
+      <button class="fmt-btn fmt-12 active" onclick="setFmt(12,true)">12h</button>
+      <button class="fmt-btn fmt-24" onclick="setFmt(24,true)">24h</button>
     </div>
   </div>
 
@@ -441,14 +457,14 @@
     </div>
   </div>
 
-  <footer>When Should I Sleep? v1.3.3 · Vibe coded with ❤️ in Claude Code.</footer>
+  <footer>Peak Sleep v1.4 · Vibe coded with ❤️ in Claude Code.</footer>
 
 </div>
 
 <!-- iOS home screen banner -->
 <div id="hsBanner" class="hs-banner hidden">
   <span class="hs-icon">🌙</span>
-  <span class="hs-text">Want <strong>When Should I Sleep?</strong> on your home screen? Tap <strong>Share → Add to Home Screen</strong>.</span>
+  <span class="hs-text">Want <strong>Peak Sleep</strong> on your home screen? Tap <strong>Share → Add to Home Screen</strong>.</span>
   <button class="hs-close" onclick="dismissHsBanner()">Dismiss</button>
 </div>
 
@@ -456,11 +472,128 @@
   const CYCLE_MINS   = 90;
   const CYCLE_COUNTS = [6, 5, 4, 3];
 
-  let mode = 'wake';
-  let fmt  = 12;
+  let mode      = 'wake';
+  let fmt       = 12;
+  let lang      = 'id';
+  let fmtManual = false;
+
+  /* ─── Translations ─── */
+  const T = {
+    en: {
+      subtitle:     'Sleep smarter. Wake up better.',
+      wakeBtn:      '⏰ Wake up at…',
+      sleepBtn:     '🛌 Sleep at…',
+      wakeCardLbl:  'I want to wake up at',
+      sleepCardLbl: "I'll fall asleep at",
+      resultsLbl:   'Recommended sleep times',
+      lede_wake:    'Get into bed at',
+      lede_sleep:   'Wake up at',
+      cycleLabel:   c => `${c} cycles`,
+      hrsLabel:     h => `${h} ${h === 1 ? 'hr' : 'hrs'}`,
+      copyFmt:      (lede, time, c, h, tag) => `${lede} ${time} · ${c} cycles · ${h} ${h === 1 ? 'hr' : 'hrs'} (${tag})`,
+      cycleTitle:   'What is a Sleep Cycle?',
+      cycleBody:    `<p class="sec-text">When you sleep, your brain doesn't just switch off. It moves through a series of stages that repeat throughout the night — each full round is called a sleep cycle, and it lasts about 90 minutes.</p>
+        <p class="sec-text">Each cycle has three main stages:</p>
+        <ul class="tips-list" style="margin-top:10px">
+          <li><strong>Light sleep</strong> — your body starts to slow down. Your heart rate drops, your muscles relax, and you drift off. This is the easiest stage to wake up from.</li>
+          <li><strong>Deep sleep</strong> — the most restorative stage. Your body repairs itself, strengthens your immune system, and consolidates memories. This is where real rest happens.</li>
+          <li><strong>REM sleep</strong> — short for Rapid Eye Movement. Your brain becomes active again, dreams occur, and your mind processes emotions and experiences from the day.</li>
+        </ul>
+        <p class="sec-text" style="margin-top:12px">A full night of sleep typically consists of 4 to 6 of these cycles. The magic is in the timing — waking up at the end of a cycle feels natural and easy. Waking up in the middle of one, especially during deep sleep, is what causes that heavy, disoriented feeling known as sleep inertia. That's the grogginess that can linger for hours even after a long night's sleep.</p>
+        <ul class="cycle-legend">
+          <li class="cl-green">😴 Peak sleep (6 cycles · 9 hrs) — peak performance and recovery</li>
+          <li class="cl-green-soft">🙂 Good sleep (5 cycles · 7.5 hrs) — well rested for most people</li>
+          <li class="cl-yellow">😐 Light sleep (4 cycles · 6 hrs) — functional but not ideal</li>
+          <li class="cl-gray">🥱 Poor sleep (3 cycles · 4.5 hrs) — expect to feel groggy</li>
+        </ul>`,
+      tipsTitle:    'Sleep Tips',
+      tipsBody:     `<ul class="tips-list">
+          <li>Avoid screens 30 min before bed</li>
+          <li>Keep your bedroom cool (16–19°C / 60–67°F)</li>
+          <li>Stick to a consistent sleep schedule, even on weekends</li>
+          <li>Avoid caffeine after 2:00 PM</li>
+        </ul>`,
+      onbHtml:      `<p class="onb-text"><strong>How do you want to plan your sleep? 😴</strong></p>
+        <p class="onb-text">🛏️ <strong>Wake up at…</strong> — find the best bedtime for your wake-up time<br>
+          ⏰ <strong>Sleep at…</strong> — find the best wake-up time for your bedtime</p>
+        <button class="onb-btn" onclick="dismissTooltip()">Got it</button>`,
+      hsBannerText: 'Want <strong>Peak Sleep</strong> on your home screen? Tap <strong>Share → Add to Home Screen</strong>.',
+      hsDismiss:    'Dismiss',
+      errValid:     'Enter a valid time to see results.',
+      errWrong:     'Something went wrong. Try adjusting the time.',
+      copied:       'Copied!',
+    },
+    id: {
+      subtitle:     'Tidur lebih cerdas. Bangun lebih segar.',
+      wakeBtn:      '⏰ Bangun jam…',
+      sleepBtn:     '🛌 Tidur jam…',
+      wakeCardLbl:  'Saya ingin bangun jam',
+      sleepCardLbl: 'Saya akan tertidur jam',
+      resultsLbl:   'Waktu tidur yang disarankan',
+      lede_wake:    'Naik ke tempat tidur jam',
+      lede_sleep:   'Bangun jam',
+      cycleLabel:   c => `${c} siklus`,
+      hrsLabel:     h => `${String(h).replace('.', ',')} jam`,
+      copyFmt:      (lede, time, c, h, tag) => `${lede} ${time} · ${c} siklus · ${String(h).replace('.', ',')} jam (${tag})`,
+      cycleTitle:   'Apa itu Siklus Tidur?',
+      cycleBody:    `<p class="sec-text">Saat tidur, otakmu tidak benar-benar 'mati'. Ia bergerak melalui serangkaian tahapan yang berulang sepanjang malam — setiap putaran penuh disebut siklus tidur, dan berlangsung sekitar 90 menit.</p>
+        <p class="sec-text">Setiap siklus memiliki tiga tahap utama:</p>
+        <ul class="tips-list" style="margin-top:10px">
+          <li><strong>Tidur ringan</strong> — tubuhmu mulai melambat. Detak jantung menurun, otot-otot rileks, dan kamu mulai terlelap. Ini adalah tahap yang paling mudah untuk terbangun.</li>
+          <li><strong>Tidur dalam</strong> — tahap paling restoratif. Tubuhmu memperbaiki diri, memperkuat sistem imun, dan mengonsolidasikan memori. Di sinilah istirahat sejati terjadi.</li>
+          <li><strong>Tidur REM</strong> — singkatan dari Rapid Eye Movement. Otakmu kembali aktif, mimpi terjadi, dan pikiranmu memproses emosi serta pengalaman dari hari itu.</li>
+        </ul>
+        <p class="sec-text" style="margin-top:12px">Satu malam tidur penuh biasanya terdiri dari 4 hingga 6 siklus. Rahasianya ada di waktu — bangun di akhir siklus terasa alami dan menyegarkan. Bangun di tengah siklus, terutama saat tidur dalam, itulah yang menyebabkan rasa berat dan linglung yang dikenal sebagai sleep inertia. Itulah rasa kantuk yang bisa bertahan berjam-jam, bahkan setelah tidur yang lama sekalipun.</p>
+        <ul class="cycle-legend">
+          <li class="cl-green">😴 Peak sleep (6 siklus · 9 jam) — performa dan pemulihan terbaik</li>
+          <li class="cl-green-soft">🙂 Good sleep (5 siklus · 7,5 jam) — istirahat cukup untuk kebanyakan orang</li>
+          <li class="cl-yellow">😐 Light sleep (4 siklus · 6 jam) — fungsional, tapi tidak ideal</li>
+          <li class="cl-gray">🥱 Poor sleep (3 siklus · 4,5 jam) — ekspektasikan rasa mengantuk</li>
+        </ul>`,
+      tipsTitle:    'Tips Tidur Lebih Baik',
+      tipsBody:     `<ul class="tips-list">
+          <li>Hindari layar 30 menit sebelum tidur</li>
+          <li>Jaga kamar tidur tetap sejuk (16–19°C / 60–67°F)</li>
+          <li>Tidur dan bangun di jam yang sama setiap hari, termasuk akhir pekan</li>
+          <li>Hindari kafein setelah pukul 14.00</li>
+        </ul>`,
+      onbHtml:      `<p class="onb-text"><strong>Mau rencanain tidur malam ini? 😴</strong></p>
+        <p class="onb-text">🛏️ <strong>Bangun jam…</strong> — cari waktu tidur terbaik berdasarkan jam bangunmu.<br>
+          ⏰ <strong>Tidur jam…</strong> — cari waktu bangun terbaik berdasarkan jam tidurmu.</p>
+        <button class="onb-btn" onclick="dismissTooltip()">Mengerti!</button>`,
+      hsBannerText: 'Mau akses <strong>Peak Sleep</strong> langsung dari layar utama? Ketuk <strong>Bagikan → Tambahkan ke Layar Utama</strong>.',
+      hsDismiss:    'Tutup',
+      errValid:     'Masukkan waktu yang valid untuk melihat hasil.',
+      errWrong:     'Terjadi kesalahan. Coba sesuaikan waktunya.',
+      copied:       'Disalin!',
+    }
+  };
 
   const SVG_COPY = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const SVG_CHK  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  /* ─── Language ─── */
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('slp_lang', l);
+    const t = T[l];
+    document.querySelector('.sub').textContent                        = t.subtitle;
+    document.getElementById('wakeBtn').textContent                    = t.wakeBtn;
+    document.getElementById('sleepBtn').textContent                   = t.sleepBtn;
+    document.querySelector('#wakeCard .card-lbl').textContent         = t.wakeCardLbl;
+    document.querySelector('#sleepCard .card-lbl').textContent        = t.sleepCardLbl;
+    document.querySelector('.res-lbl').textContent                    = t.resultsLbl;
+    document.querySelector('#cycleCard .sec-header-lbl').textContent  = t.cycleTitle;
+    document.querySelector('#cycleCard .sec-body').innerHTML          = t.cycleBody;
+    document.querySelector('#tipsCard .sec-header-lbl').textContent   = t.tipsTitle;
+    document.querySelector('#tipsCard .sec-body').innerHTML           = t.tipsBody;
+    document.querySelector('#tooltip .onb-tooltip').innerHTML         = t.onbHtml;
+    document.querySelector('#hsBanner .hs-text').innerHTML            = t.hsBannerText;
+    document.querySelector('#hsBanner .hs-close').textContent         = t.hsDismiss;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+    if (!fmtManual) setFmt(l === 'id' ? 24 : 12); // auto-format; setFmt calls calc()
+    else calc();
+  }
 
   /* ─── Mode ─── */
   function setMode(m) {
@@ -495,9 +628,10 @@
   }
 
   /* ─── Format ─── */
-  function setFmt(f) {
+  function setFmt(f, manual) {
     fmt = f;
     localStorage.setItem('slp_fmt', f);
+    if (manual) { fmtManual = true; localStorage.setItem('slp_fmt_manual', '1'); }
     document.querySelectorAll('.fmt-12').forEach(b => b.classList.toggle('active', f === 12));
     document.querySelectorAll('.fmt-24').forEach(b => b.classList.toggle('active', f === 24));
     updateAllFaces();
@@ -532,13 +666,14 @@
   /* ─── Calculate & render ─── */
   function calc() {
     const el = document.getElementById('results');
+    const t = T[lang];
     const inputId = mode === 'wake' ? 'wakeInput' : 'sleepInput';
     const v = document.getElementById(inputId).value;
     if (!v) { el.innerHTML = ''; return; }
 
     const [h, m] = v.split(':').map(Number);
     if (isNaN(h) || isNaN(m)) {
-      el.innerHTML = '<p class="no-results">Enter a valid time to see results.</p>';
+      el.innerHTML = `<p class="no-results">${t.errValid}</p>`;
       return;
     }
     const base = h * 60 + m;
@@ -550,23 +685,22 @@
 
         if (mode === 'wake') {
           primaryMins = base - sleepMins;
-          primaryLede = 'Get into bed at';
+          primaryLede = t.lede_wake;
         } else {
           primaryMins = base + sleepMins;
-          primaryLede = 'Wake up at';
+          primaryLede = t.lede_sleep;
         }
 
         const primaryTime = fmtTime(minsToDate(primaryMins));
-        const hrs = String(c * 1.5);
-        const hrWord = c * 1.5 === 1 ? 'hr' : 'hrs';
-        const copyText = `${primaryLede} ${primaryTime} · ${c} cycles · ${hrs} ${hrWord} (${plainTagOf(c)})`;
+        const hrs = c * 1.5;
+        const copyText = t.copyFmt(primaryLede, primaryTime, c, hrs, plainTagOf(c));
         const cls = colorOf(c);
 
         return `
           <div class="res-card ${cls}">
             <div class="cyc-badge">
-              <span class="cyc-cycles">${c} cycles</span>
-              <span class="cyc-hrs">${String(c * 1.5)} ${c * 1.5 === 1 ? 'hr' : 'hrs'}</span>
+              <span class="cyc-cycles">${t.cycleLabel(c)}</span>
+              <span class="cyc-hrs">${t.hrsLabel(hrs)}</span>
             </div>
             <div class="res-body">
               <div class="res-lede">${primaryLede}</div>
@@ -576,11 +710,10 @@
             <button class="cp-btn" data-t="${copyText}" onclick="doCopy(this)" aria-label="Copy time">
               ${SVG_COPY}
             </button>
-          </div>
-`;
+          </div>`;
       }).join('');
     } catch (e) {
-      el.innerHTML = '<p class="no-results">Something went wrong. Try adjusting the time.</p>';
+      el.innerHTML = `<p class="no-results">${t.errWrong}</p>`;
     }
   }
 
@@ -606,7 +739,7 @@
     const text = btn.dataset.t;
     const ok = () => {
       btn.classList.add('ok');
-      btn.innerHTML = '<span class="cp-copied-txt">Copied!</span>';
+      btn.innerHTML = `<span class="cp-copied-txt">${T[lang].copied}</span>`;
       setTimeout(() => { btn.classList.remove('ok'); btn.innerHTML = SVG_COPY; }, 2000);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -636,11 +769,16 @@
     const sst = localStorage.getItem('slp_sleep_time');
     if (sst) document.getElementById('sleepInput').value = sst;
 
+    if (localStorage.getItem('slp_fmt_manual') === '1') fmtManual = true;
+
     document.querySelectorAll('.fmt-12').forEach(b => b.classList.toggle('active', fmt === 12));
     document.querySelectorAll('.fmt-24').forEach(b => b.classList.toggle('active', fmt === 24));
 
     updateAllFaces();
-    calc();
+
+    const sl = localStorage.getItem('slp_lang');
+    lang = (sl && T[sl]) ? sl : 'id';
+    setLang(lang); // applies translations; auto-sets format if !fmtManual; calls calc()
 
     // Restore collapsible section states (collapsed by default; remove if user opened)
     if (localStorage.getItem('slp_cycle_collapsed') === '0')
