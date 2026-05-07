@@ -22,7 +22,7 @@ Sleep happens in 90-minute cycles. Waking up between cycles — rather than in t
 
 ## Usage
 
-Open the live app: **[yourusername.github.io/sleep-app](https://yourusername.github.io/sleep-app)**
+Open the live app: **[ohaiadit.github.io/sleep-app](https://ohaiadit.github.io/sleep-app)**
 
 Or run it locally by cloning the repo and opening `index.html` in any browser — no dependencies, no build step required.
 
