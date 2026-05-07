@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sleep Calculator</title>
+  <title>When Should I Wake Up?</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -262,6 +262,22 @@
     }
 
     .hidden { display: none !important; }
+
+    /* Wind-down card — smooth collapse when switching to sleep mode */
+    #wdCard {
+      overflow: hidden;
+      max-height: 300px;
+      opacity: 1;
+      transition: max-height .26s cubic-bezier(.4,0,.2,1),
+                  opacity .2s ease,
+                  margin-bottom .26s cubic-bezier(.4,0,.2,1);
+    }
+    #wdCard.wd-hidden {
+      max-height: 0;
+      opacity: 0;
+      margin-bottom: 0;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -269,8 +285,8 @@
 
   <header>
     <span class="icon">🌙</span>
-    <h1>Sleep Calculator</h1>
-    <p class="sub">Wake up between cycles, not during them</p>
+    <h1>When Should I Wake Up?</h1>
+    <p class="sub">Find the best time to wake up based on your sleep cycles.</p>
   </header>
 
   <!-- Mode toggle -->
@@ -291,7 +307,7 @@
 
   <!-- Sleep-at input -->
   <div class="card hidden" id="sleepCard">
-    <div class="card-lbl">I'm going to bed at</div>
+    <div class="card-lbl">I'll fall asleep at</div>
     <div class="time-box">
       <div class="time-face" id="sleepFace"></div>
       <input type="time" id="sleepInput" value="23:00" oninput="onTimeInput('sleepInput','sleepFace')" onclick="tryShowPicker(this)">
@@ -299,7 +315,7 @@
   </div>
 
   <!-- Wind-down slider -->
-  <div class="card">
+  <div class="card" id="wdCard">
     <div class="sl-head">
       <div class="card-lbl">Wind-down time</div>
       <div class="wd-ctrl">
@@ -328,7 +344,7 @@
 
   <div id="results"></div>
 
-  <footer>Sleep cycles fixed at 90 min &nbsp;·&nbsp; Adjust wind-down to match your experience</footer>
+  <footer>Made with ♥️ in Claude Code.</footer>
 
 </div>
 
@@ -352,6 +368,7 @@
     document.getElementById('pill').classList.toggle('right', m === 'sleep');
     document.getElementById('wakeCard').classList.toggle('hidden',  m !== 'wake');
     document.getElementById('sleepCard').classList.toggle('hidden', m !== 'sleep');
+    document.getElementById('wdCard').classList.toggle('wd-hidden', m === 'sleep');
     calc();
   }
 
@@ -445,10 +462,10 @@
         primaryMins = asleepMins;          // primary is now the asleep time
         primaryLede = 'Asleep by';
       } else {
-        // Count forwards: bed → sleep → wake
+        // Input is fall-asleep time; count forward to wake
+        asleepMins  = base;
         bedMins     = base;
-        asleepMins  = base + offset;
-        primaryMins = asleepMins + sleepMins;
+        primaryMins = base + sleepMins;
         primaryLede = 'Wake up at';
       }
 
