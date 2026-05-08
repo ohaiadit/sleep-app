@@ -40,6 +40,7 @@ open index.html
 - Color-coded sleep quality results
 - 12/24-hour time format toggle
 - EN/ID language toggle (defaults to Bahasa Indonesia)
+- 24-hour time format defaults when Bahasa Indonesia is selected
 - Copy to clipboard — copies the full result summary
 - Collapsible sleep cycle explainer and sleep tips
 - First-load onboarding tooltip with reopenable help button
@@ -60,22 +61,16 @@ This app was built entirely using [Claude Code](https://claude.ai/code) — Anth
 |---------|-------------|
 | v1.0 | Initial release — two modes, cycle length slider, copy to clipboard |
 | v1.1 | Removed cycle length slider, added wind-down time slider, improved result cards, renamed "Sleeping now" to "Sleep at…", app name and subtitle updated |
-| v1.2 | Bug fixes and UX improvements — iOS Safari fix, time format toggle, wind-down toggle and explainer, result card hierarchy, save user preferences, default times, favicon, sleep hours on cards, midnight crossover label, copy feedback, social meta tags |
-| v1.3 | Onboarding tooltip, sleep tips section, Add to Home Screen prompt |
-| v1.3.1 | Collapsible sleep cycle explainer and sleep tips; removed wind-down time; updated result labels and colors |
-| v1.3.2 | App renamed to "When Should I Sleep?", emoji labels, sleep cycle explainer rewrite, removed tomorrow label, 12/24hr toggle repositioned |
-| v1.3.3 | Moon icon, updated subtitle, separator, footer with app name and version, clipboard format, sleep quality label refresh, onboarding and help button update |
-| v1.4 | App renamed to "Peak Sleep", new subtitle, Bahasa Indonesia translation, EN/ID language toggle, apple touch icon |
+| v1.2 | Bug fixes and UX improvements — iOS Safari fix, time format toggle, save user preferences, default times, favicon, sleep hours on cards, copy feedback, social meta tags |
+| v1.3 | Onboarding tooltip and help button, sleep cycle explainer, sleep tips, result label and color refresh, Add to Home Screen prompt, app renamed to "When Should I Sleep?" |
+| v1.4 | App renamed to "Peak Sleep", new subtitle, Bahasa Indonesia translation, EN/ID toggle, 24hr default for ID, apple touch icon, onboarding copy update |
+| v1.4.1 | Fixed favicon clipping on Windows |
 
 ## Roadmap
 
 - v1.5 — Nap mode
 - v1.6 — Sleep debt tracker
 - v2.0 — PWA support (installable on phone like a native app)
-
-## License
-
-MIT — free to use, modify, and distribute.
 
 ## About
 
@@ -84,3 +79,7 @@ I'm a content marketing manager by day — which means late nights, tight deadli
 I'm not a developer. This entire app was built conversationally through Claude Code, one iteration at a time. It's a personal project, but if it helps you wake up feeling less like a zombie, that's a win.
 
 — Aditya · [linkedin.com/in/ohaiadit](https://linkedin.com/in/ohaiadit)
+
+## License
+
+MIT — free to use, modify, and distribute.
