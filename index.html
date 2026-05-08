@@ -298,6 +298,30 @@
       color: var(--accent); font-weight: 700; font-size: 18px; line-height: .9;
     }
 
+    /* ── CTA button ── */
+    .cta-btn {
+      display: block; width: 100%;
+      background: var(--accent); color: #0d1117;
+      border: none; border-radius: var(--r);
+      padding: 16px; font-size: 16px; font-weight: 700;
+      letter-spacing: -.2px;
+      cursor: pointer; margin-bottom: 16px;
+      transition: opacity .15s, transform .12s;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 52px;
+    }
+    .cta-btn:hover  { opacity: .88; }
+    .cta-btn:active { transform: scale(.98); opacity: .82; }
+
+    /* ── Results slide-in animation ── */
+    @keyframes resultsIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .results-animate-in {
+      animation: resultsIn .35s cubic-bezier(.4,0,.2,1) both;
+    }
+
     /* ── Home screen banner ── */
     .hs-banner {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -411,16 +435,20 @@
     </div>
   </div>
 
-  <!-- Results -->
-  <div class="res-row">
-    <div class="res-lbl">Recommended sleep times</div>
-  </div>
+  <!-- CTA button -->
+  <button id="ctaBtn" class="cta-btn" onclick="showResults()">Show my best bedtimes</button>
 
-  <div id="results"></div>
+  <!-- Results section (hidden until CTA tapped) -->
+  <div id="resultsSection" class="hidden">
+    <div class="res-row">
+      <div class="res-lbl">Recommended sleep times</div>
+    </div>
+    <div id="results"></div>
+  </div><!-- /resultsSection -->
 
   <div class="section-div"></div>
 
-  <!-- Sleep cycle explainer -->
+  <!-- Sleep cycle explainer (always visible) -->
   <div class="sec-card collapsed" id="cycleCard">
     <button class="sec-header" onclick="toggleSection('cycleCard','slp_cycle_collapsed')">
       <span class="sec-header-lbl">What is a Sleep Cycle?</span>
@@ -444,21 +472,23 @@
     </div>
   </div>
 
-  <!-- Sleep tips -->
-  <div class="sec-card collapsed" id="tipsCard">
-    <button class="sec-header" onclick="toggleSection('tipsCard','slp_tips_collapsed')">
-      <span class="sec-header-lbl">Sleep Tips</span>
-      <span class="sec-arrow">›</span>
-    </button>
-    <div class="sec-body">
-      <ul class="tips-list">
-        <li>Avoid screens 30 min before bed</li>
-        <li>Keep your bedroom cool (16–19°C / 60–67°F)</li>
-        <li>Stick to a consistent sleep schedule, even on weekends</li>
-        <li>Avoid caffeine after 2:00 PM</li>
-      </ul>
+  <!-- Tips section -->
+  <div id="tipsSection">
+    <div class="sec-card collapsed" id="tipsCard">
+      <button class="sec-header" onclick="toggleSection('tipsCard','slp_tips_collapsed')">
+        <span class="sec-header-lbl">Sleep Tips</span>
+        <span class="sec-arrow">›</span>
+      </button>
+      <div class="sec-body">
+        <ul class="tips-list">
+          <li>Avoid screens 30 min before bed</li>
+          <li>Keep your bedroom cool (16–19°C / 60–67°F)</li>
+          <li>Stick to a consistent sleep schedule, even on weekends</li>
+          <li>Avoid caffeine after 2:00 PM</li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </div><!-- /tipsSection -->
 
   <footer>Peak Sleep v1.4 · Vibe coded with ❤️ in Claude Code.</footer>
 
@@ -475,10 +505,11 @@
   const CYCLE_MINS   = 90;
   const CYCLE_COUNTS = [6, 5, 4, 3];
 
-  let mode      = 'wake';
-  let fmt       = 12;
-  let lang      = 'id';
-  let fmtManual = false;
+  let mode         = 'wake';
+  let fmt          = 12;
+  let lang         = 'id';
+  let fmtManual    = false;
+  let resultsShown = false;
 
   /* ─── Translations ─── */
   const T = {
@@ -524,6 +555,8 @@
         <button class="onb-btn" onclick="dismissTooltip()">Got it!</button>`,
       hsBannerText: 'Want <strong>Peak Sleep</strong> on your home screen? Tap <strong>Share → Add to Home Screen</strong>.',
       hsDismiss:    'Dismiss',
+      ctaWake:      'Show my best bedtimes',
+      ctaSleep:     'Show my best wake-up times',
       errValid:     'Enter a valid time to see results.',
       errWrong:     'Something went wrong. Try adjusting the time.',
       copied:       'Copied!',
@@ -570,6 +603,8 @@
         <button class="onb-btn" onclick="dismissTooltip()">Mengerti!</button>`,
       hsBannerText: 'Mau akses <strong>Peak Sleep</strong> langsung dari layar utama? Ketuk <strong>Bagikan → Tambahkan ke Layar Utama</strong>.',
       hsDismiss:    'Tutup',
+      ctaWake:      'Tampilkan waktu tidur terbaik',
+      ctaSleep:     'Tampilkan waktu bangun terbaik',
       errValid:     'Masukkan waktu yang valid untuk melihat hasil.',
       errWrong:     'Terjadi kesalahan. Coba sesuaikan waktunya.',
       copied:       'Disalin!',
@@ -578,6 +613,31 @@
 
   const SVG_COPY = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
   const SVG_CHK  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  /* ─── Results visibility ─── */
+  function hideResults() {
+    if (!resultsShown) return;
+    resultsShown = false;
+    const s = document.getElementById('resultsSection');
+    s.classList.add('hidden');
+    s.classList.remove('results-animate-in');
+  }
+
+  function showResults() {
+    const inputId = mode === 'wake' ? 'wakeInput' : 'sleepInput';
+    if (!document.getElementById(inputId).value) return;
+    calc();
+    resultsShown = true;
+    const s = document.getElementById('resultsSection');
+    s.classList.remove('hidden', 'results-animate-in');
+    void s.offsetWidth; // force reflow to restart animation
+    s.classList.add('results-animate-in');
+  }
+
+  function updateCtaLabel() {
+    const t = T[lang];
+    document.getElementById('ctaBtn').textContent = mode === 'wake' ? t.ctaWake : t.ctaSleep;
+  }
 
   /* ─── Language ─── */
   function setLang(l) {
@@ -598,8 +658,9 @@
     document.querySelector('#hsBanner .hs-text').innerHTML            = t.hsBannerText;
     document.querySelector('#hsBanner .hs-close').textContent         = t.hsDismiss;
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
-    if (!fmtManual) setFmt(l === 'id' ? 24 : 12); // auto-format; setFmt calls calc()
-    else calc();
+    if (!fmtManual) setFmt(l === 'id' ? 24 : 12); // auto-format; setFmt re-renders if resultsShown
+    else if (resultsShown) calc();
+    updateCtaLabel();
   }
 
   /* ─── Mode ─── */
@@ -610,7 +671,8 @@
     document.getElementById('pill').classList.toggle('right', m === 'sleep');
     document.getElementById('wakeCard').classList.toggle('hidden',  m !== 'wake');
     document.getElementById('sleepCard').classList.toggle('hidden', m !== 'sleep');
-    calc();
+    hideResults();
+    updateCtaLabel();
   }
 
   /* ─── Time picker ─── */
@@ -631,7 +693,7 @@
   function onTimeInput(inputId, faceId) {
     updateFace(inputId, faceId);
     localStorage.setItem(inputId === 'wakeInput' ? 'slp_wake_time' : 'slp_sleep_time', document.getElementById(inputId).value);
-    calc();
+    hideResults();
   }
 
   /* ─── Format ─── */
@@ -642,7 +704,7 @@
     document.querySelectorAll('.fmt-12').forEach(b => b.classList.toggle('active', f === 12));
     document.querySelectorAll('.fmt-24').forEach(b => b.classList.toggle('active', f === 24));
     updateAllFaces();
-    calc();
+    if (resultsShown) calc();
   }
   function fmtTime(date) {
     const H = date.getHours(), M = date.getMinutes();
