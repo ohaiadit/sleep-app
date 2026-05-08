@@ -298,6 +298,18 @@
       color: var(--accent); font-weight: 700; font-size: 18px; line-height: .9;
     }
 
+    /* ── Add to Calendar button ── */
+    .cal-btn {
+      flex-shrink: 0;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted);
+      font-size: 11px; font-weight: 500;
+      padding: 4px 8px; cursor: pointer; line-height: 1.4;
+      transition: border-color .15s, color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cal-btn:hover { border-color: var(--muted); color: var(--text); }
+
     /* ── CTA button ── */
     .cta-btn {
       display: block; width: 100%;
@@ -557,6 +569,9 @@
       hsDismiss:    'Dismiss',
       ctaWake:      'Show my best bedtimes',
       ctaSleep:     'Show my best wake-up times',
+      calBtn:       'Add to Calendar 📅',
+      calTitle:     'Bedtime 🌙 — Peak Sleep',
+      calDesc:      (c, wakeTime) => `Time to sleep! You'll complete ${c} cycles and wake up at ${wakeTime} feeling refreshed.`,
       errValid:     'Enter a valid time to see results.',
       errWrong:     'Something went wrong. Try adjusting the time.',
       copied:       'Copied!',
@@ -605,6 +620,9 @@
       hsDismiss:    'Tutup',
       ctaWake:      'Tampilkan waktu tidur terbaik',
       ctaSleep:     'Tampilkan waktu bangun terbaik',
+      calBtn:       'Tambah ke Kalender 📅',
+      calTitle:     'Waktu Tidur 🌙 — Peak Sleep',
+      calDesc:      (c, wakeTime) => `Waktunya tidur! Kamu akan menyelesaikan ${c} siklus dan bangun jam ${wakeTime} dengan segar.`,
       errValid:     'Masukkan waktu yang valid untuk melihat hasil.',
       errWrong:     'Terjadi kesalahan. Coba sesuaikan waktunya.',
       copied:       'Disalin!',
@@ -746,6 +764,7 @@
       return;
     }
     const base = h * 60 + m;
+    const norm = raw => ((raw % 1440) + 1440) % 1440;
 
     try {
       el.innerHTML = CYCLE_COUNTS.map(c => {
@@ -765,6 +784,9 @@
         const copyText = t.copyFmt(primaryLede, primaryTime, c, hrs, plainTagOf(c));
         const cls = colorOf(c);
 
+        const bedMins  = mode === 'wake' ? norm(primaryMins) : base;
+        const wakeMins = mode === 'wake' ? base : norm(primaryMins);
+
         return `
           <div class="res-card ${cls}">
             <div class="cyc-badge">
@@ -776,9 +798,7 @@
               <div class="res-time">${primaryTime}</div>
               <div class="res-tag">${tagOf(c)}</div>
             </div>
-            <button class="cp-btn" data-t="${copyText}" onclick="doCopy(this)" aria-label="Copy time">
-              ${SVG_COPY}
-            </button>
+            <button class="cal-btn" data-bed="${bedMins}" data-wake="${wakeMins}" data-cycles="${c}" onclick="addToCalendar(this)">${t.calBtn}</button>
           </div>`;
       }).join('');
     } catch (e) {
@@ -801,6 +821,51 @@
   function toggleSection(id, key) {
     const collapsed = document.getElementById(id).classList.toggle('collapsed');
     localStorage.setItem(key, collapsed ? '1' : '0');
+  }
+
+  /* ─── Add to Calendar ─── */
+  function addToCalendar(btn) {
+    const bedMins  = +btn.dataset.bed;
+    const wakeMins = +btn.dataset.wake;
+    const cycles   = +btn.dataset.cycles;
+    const t = T[lang];
+
+    // Schedule for tonight; push to tomorrow if that time has already passed
+    const now = new Date();
+    const bedDate = new Date();
+    bedDate.setHours(Math.floor(bedMins / 60), bedMins % 60, 0, 0);
+    if (bedDate <= now) bedDate.setDate(bedDate.getDate() + 1);
+
+    const wakeTime = fmtTime(minsToDate(wakeMins));
+
+    function icsEsc(s) {
+      return s.replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n');
+    }
+    function icsDate(d) {
+      const p = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
+    }
+
+    const dt  = icsDate(bedDate);
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Peak Sleep//EN',
+      'BEGIN:VEVENT',
+      `DTSTART:${dt}`,
+      `DTEND:${dt}`,
+      `SUMMARY:${icsEsc(t.calTitle)}`,
+      `DESCRIPTION:${icsEsc(t.calDesc(cycles, wakeTime))}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const a = document.createElement('a');
+    a.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+    a.download = 'bedtime.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   /* ─── Copy ─── */
