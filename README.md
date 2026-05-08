@@ -65,8 +65,14 @@ This app was built entirely using [Claude Code](https://claude.ai/code) — Anth
 | v1.3 | Onboarding tooltip and help button, sleep cycle explainer, sleep tips, result label and color refresh, Add to Home Screen prompt, app renamed to "When Should I Sleep?" |
 | v1.4 | App renamed to "Peak Sleep", new subtitle, Bahasa Indonesia translation, EN/ID toggle, 24hr default for ID, apple touch icon, onboarding copy update |
 | v1.4.1 | Fixed favicon clipping on Windows |
+| v1.4.2 | Friendlier onboarding header and app subtitle |
+| v1.5 | Results on demand, mode-aware CTA button (show/hide toggle), sleep cycle explainer and sleep tips visible on load, single divider above collapsibles, collapsible order: About Peak Sleep → What is a sleep cycle? → Sleep tips |
+| v1.6 | Set sleep reminder button replaces copy button on result cards, hidden in Sleep at mode, iOS Safari layout fix |
+| v1.6.1 | Onboarding copy overhaul, About Peak Sleep collapsible, CTA toggle button, flat onboarding styling |
 
 ## Roadmap
+
+These are ideas, not promises. The roadmap may change based on feedback and priorities.
 
 - v1.5 — Nap mode
 - v1.6 — Sleep debt tracker
