@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Peak Sleep</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌙%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='66' text-anchor='middle' font-size='60'%3E🌙%3C/text%3E%3C/svg%3E">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Peak Sleep">
@@ -271,7 +271,9 @@
       display: flex; flex-direction: column; gap: 10px;
       width: 100%; max-width: 400px;
     }
-    .onb-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .onb-title { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.35; }
+    .onb-sub   { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .onb-text  { font-size: 13px; color: var(--muted); line-height: 1.6; }
     .onb-btn {
       align-self: flex-end;
       background: var(--surface-2); color: var(--text);
@@ -348,7 +350,6 @@
     .sec-body p + p { margin-top: 12px; }
 
     .hidden { display: none !important; }
-
   </style>
 </head>
 <body>
@@ -375,10 +376,12 @@
   <!-- Onboarding overlay -->
   <div id="tooltip" class="onb-overlay hidden">
     <div class="onb-tooltip">
-      <p class="onb-text"><strong>How do you want to plan your sleep? 😴</strong></p>
+      <p class="onb-title">How do you want to plan your sleep? 😴</p>
+      <p class="onb-text">Peak Sleep helps you find the best time to go to bed or wake up — so you stop waking up groggy and start waking up refreshed.</p>
+      <p class="onb-sub">Two ways to plan your sleep:</p>
       <p class="onb-text">🛏️ <strong>Wake up at…</strong> — find the best bedtime for your wake-up time<br>
         ⏰ <strong>Sleep at…</strong> — find the best wake-up time for your bedtime</p>
-      <button class="onb-btn" onclick="dismissTooltip()">Got it</button>
+      <button class="onb-btn" onclick="dismissTooltip()">Got it!</button>
     </div>
   </div>
 
@@ -513,10 +516,12 @@
           <li>Stick to a consistent sleep schedule, even on weekends</li>
           <li>Avoid caffeine after 2:00 PM</li>
         </ul>`,
-      onbHtml:      `<p class="onb-text"><strong>How do you want to plan your sleep? 😴</strong></p>
+      onbHtml:      `<p class="onb-title">How do you want to plan your sleep? 😴</p>
+        <p class="onb-text">Peak Sleep helps you find the best time to go to bed or wake up — so you stop waking up groggy and start waking up refreshed.</p>
+        <p class="onb-sub">Two ways to plan your sleep:</p>
         <p class="onb-text">🛏️ <strong>Wake up at…</strong> — find the best bedtime for your wake-up time<br>
           ⏰ <strong>Sleep at…</strong> — find the best wake-up time for your bedtime</p>
-        <button class="onb-btn" onclick="dismissTooltip()">Got it</button>`,
+        <button class="onb-btn" onclick="dismissTooltip()">Got it!</button>`,
       hsBannerText: 'Want <strong>Peak Sleep</strong> on your home screen? Tap <strong>Share → Add to Home Screen</strong>.',
       hsDismiss:    'Dismiss',
       errValid:     'Enter a valid time to see results.',
@@ -557,7 +562,9 @@
           <li>Tidur dan bangun di jam yang sama setiap hari, termasuk akhir pekan</li>
           <li>Hindari kafein setelah pukul 14.00</li>
         </ul>`,
-      onbHtml:      `<p class="onb-text"><strong>Mau rencanain tidur malam ini? 😴</strong></p>
+      onbHtml:      `<p class="onb-title">Mau rencanain tidur malam ini? 😴</p>
+        <p class="onb-text">Peak Sleep membantu kamu menemukan waktu tidur atau bangun yang paling pas — biar kamu nggak lagi bangun dengan kepala berat dan badan lemas.</p>
+        <p class="onb-sub">Dua cara untuk rencanain tidurmu:</p>
         <p class="onb-text">🛏️ <strong>Bangun jam…</strong> — cari waktu tidur terbaik berdasarkan jam bangunmu.<br>
           ⏰ <strong>Tidur jam…</strong> — cari waktu bangun terbaik berdasarkan jam tidurmu.</p>
         <button class="onb-btn" onclick="dismissTooltip()">Mengerti!</button>`,
@@ -797,6 +804,22 @@
       document.getElementById('hsBanner').classList.remove('hidden');
     }
 
+    // Canvas favicon — overrides SVG for pixel-accurate rendering on Windows/Mac
+    try {
+      const fsz = 64;
+      const fcv = document.createElement('canvas');
+      fcv.width = fcv.height = fsz;
+      const fctx = fcv.getContext('2d');
+      fctx.fillStyle = '#0d1117';
+      fctx.fillRect(0, 0, fsz, fsz);
+      fctx.font = `${Math.round(fsz * 0.55)}px serif`;
+      fctx.textAlign = 'center';
+      fctx.textBaseline = 'middle';
+      fctx.fillText('🌙', fsz / 2, fsz / 2);
+      const flnk = document.querySelector('link[rel="icon"]');
+      if (flnk) { flnk.type = 'image/png'; flnk.href = fcv.toDataURL(); }
+    } catch (e) {}
+
     // Canvas-generated apple-touch-icon for iOS home screen
     try {
       const sz = 180;
@@ -805,7 +828,7 @@
       const ctx = cv.getContext('2d');
       ctx.fillStyle = '#0d1117';
       ctx.fillRect(0, 0, sz, sz);
-      ctx.font = `${sz * 0.72}px serif`;
+      ctx.font = `${Math.round(sz * 0.55)}px serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('🌙', sz / 2, sz / 2);
