@@ -449,7 +449,7 @@
   </div>
 
   <!-- CTA button -->
-  <button id="ctaBtn" class="cta-btn" onclick="showResults()">Show my best bedtimes</button>
+  <button id="ctaBtn" class="cta-btn" onclick="toggleResults()">Show my best bedtimes</button>
 
   <!-- Results section (hidden until CTA tapped) -->
   <div id="resultsSection" class="hidden">
@@ -585,6 +585,8 @@
       hsDismiss:    'Dismiss',
       ctaWake:      'Show my best bedtimes',
       ctaSleep:     'Show my best wake-up times',
+      ctaWakeHide:  'Hide my best bedtimes',
+      ctaSleepHide: 'Hide my best wake-up times',
       calBtn:       'Set sleep reminder 📅',
       calTitle:     'Bedtime 🌙 — Peak Sleep',
       calDesc:      (c, wakeTime) => `Time to sleep! You'll complete ${c} cycles and wake up at ${wakeTime} feeling refreshed.`,
@@ -639,6 +641,8 @@
       hsDismiss:    'Tutup',
       ctaWake:      'Tampilkan waktu tidur terbaik',
       ctaSleep:     'Tampilkan waktu bangun terbaik',
+      ctaWakeHide:  'Sembunyikan waktu tidur terbaik',
+      ctaSleepHide: 'Sembunyikan waktu bangun terbaik',
       calBtn:       'Atur pengingat tidur 📅',
       calTitle:     'Waktu Tidur 🌙 — Peak Sleep',
       calDesc:      (c, wakeTime) => `Waktunya tidur! Kamu akan menyelesaikan ${c} siklus dan bangun jam ${wakeTime} dengan segar.`,
@@ -658,6 +662,7 @@
     const s = document.getElementById('resultsSection');
     s.classList.add('hidden');
     s.classList.remove('results-animate-in');
+    updateCtaLabel();
   }
 
   function showResults() {
@@ -669,11 +674,22 @@
     s.classList.remove('hidden', 'results-animate-in');
     void s.offsetWidth; // force reflow to restart animation
     s.classList.add('results-animate-in');
+    updateCtaLabel();
+  }
+
+  function toggleResults() {
+    if (resultsShown) hideResults();
+    else showResults();
   }
 
   function updateCtaLabel() {
     const t = T[lang];
-    document.getElementById('ctaBtn').textContent = mode === 'wake' ? t.ctaWake : t.ctaSleep;
+    const btn = document.getElementById('ctaBtn');
+    if (resultsShown) {
+      btn.textContent = mode === 'wake' ? t.ctaWakeHide : t.ctaSleepHide;
+    } else {
+      btn.textContent = mode === 'wake' ? t.ctaWake : t.ctaSleep;
+    }
   }
 
   /* ─── Language ─── */
