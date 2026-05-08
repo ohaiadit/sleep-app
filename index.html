@@ -300,11 +300,12 @@
 
     /* ── Add to Calendar button ── */
     .cal-btn {
-      flex-shrink: 0;
+      display: block; width: 100%; margin-top: 8px;
       background: transparent; border: 1px solid var(--border);
       border-radius: 6px; color: var(--muted);
       font-size: 11px; font-weight: 500;
-      padding: 4px 8px; cursor: pointer; line-height: 1.4;
+      padding: 5px 8px; cursor: pointer; line-height: 1.4;
+      text-align: center;
       transition: border-color .15s, color .15s;
       -webkit-tap-highlight-color: transparent;
     }
@@ -797,8 +798,8 @@
               <div class="res-lede">${primaryLede}</div>
               <div class="res-time">${primaryTime}</div>
               <div class="res-tag">${tagOf(c)}</div>
+              <button class="cal-btn" data-bed="${bedMins}" data-wake="${wakeMins}" data-cycles="${c}" onclick="addToCalendar(this)">${t.calBtn}</button>
             </div>
-            <button class="cal-btn" data-bed="${bedMins}" data-wake="${wakeMins}" data-cycles="${c}" onclick="addToCalendar(this)">${t.calBtn}</button>
           </div>`;
       }).join('');
     } catch (e) {
