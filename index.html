@@ -565,9 +565,9 @@
       resultsLbl:   'Recommended sleep times',
       lede_wake:    'Get into bed at',
       lede_sleep:   'Wake up at',
-      cycleLabel:   c => `${c} cycles`,
+      cycleLabel:   c => `${c} ${c === 1 ? 'cycle' : 'cycles'}`,
       hrsLabel:     h => `${h} ${h === 1 ? 'hr' : 'hrs'}`,
-      copyFmt:      (lede, time, c, h, tag) => `${lede} ${time} · ${c} cycles · ${h} ${h === 1 ? 'hr' : 'hrs'} (${tag})`,
+      copyFmt:      (lede, time, c, h, tag) => `${lede} ${time} · ${c} ${c === 1 ? 'cycle' : 'cycles'} · ${h} ${h === 1 ? 'hr' : 'hrs'} (${tag})`,
       cycleTitle:   'What is a Sleep Cycle?',
       cycleBody:    `<p class="sec-text">When you sleep, your brain doesn't just switch off. It moves through a series of stages that repeat throughout the night — each full round is called a sleep cycle, and it lasts about 90 minutes.</p>
         <p class="sec-text">Each cycle has three main stages:</p>
@@ -609,7 +609,7 @@
       ctaSleepHide: 'Hide my best wake-up times',
       calBtn:       'Set sleep reminder 📅',
       calTitle:     'Bedtime 🌙 — Peak Sleep',
-      calDesc:      (c, wakeTime) => `Time to sleep! You'll complete ${c} cycles and wake up at ${wakeTime} feeling refreshed.`,
+      calDesc:      (c, wakeTime) => `Time to sleep! You'll complete ${c} ${c === 1 ? 'cycle' : 'cycles'} and wake up at ${wakeTime} feeling refreshed.`,
       errValid:     'Enter a valid time to see results.',
       errWrong:     'Something went wrong. Try adjusting the time.',
       copied:       'Copied!',
